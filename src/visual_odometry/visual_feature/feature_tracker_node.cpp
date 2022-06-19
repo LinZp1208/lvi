@@ -289,7 +289,7 @@ void lidar_callback(const sensor_msgs::PointCloud2ConstPtr& laser_msg)
     // 7. pop old cloud
     while (!timeQueue.empty())
     {
-        if (timeScanCur - timeQueue.front() > 5.0)
+        if (timeScanCur - timeQueue.front() > 4.0)
         {
             cloudQueue.pop_front();
             timeQueue.pop_front();

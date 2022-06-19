@@ -74,6 +74,7 @@ public:
     ros::Publisher pub_depth_feature;
     ros::Publisher pub_depth_image;
     ros::Publisher pub_depth_cloud;
+    ros::Publisher pub_unit_depth_cloud;
 
     tf::TransformListener listener;
     tf::StampedTransform transform;
@@ -88,6 +89,7 @@ public:
         pub_depth_feature = n.advertise<sensor_msgs::PointCloud2>(PROJECT_NAME + "/vins/depth/depth_feature", 5);
         pub_depth_image =   n.advertise<sensor_msgs::Image>      (PROJECT_NAME + "/vins/depth/depth_image",   5);
         pub_depth_cloud =   n.advertise<sensor_msgs::PointCloud2>(PROJECT_NAME + "/vins/depth/depth_cloud",   5);
+        pub_unit_depth_cloud = n.advertise<sensor_msgs::PointCloud2>(PROJECT_NAME + "/vins/depth/unit_depth_cloud",   5);
 
         pointsArray.resize(num_bins);
         for (int i = 0; i < num_bins; ++i)
@@ -145,6 +147,9 @@ public:
             p.intensity = -1; // intensity will be used to save depth
             features_3d_sphere->push_back(p);
         }
+
+        //publish
+        publishCloud(&pub_unit_depth_cloud, features_3d_sphere, stamp_cur, "vins_body_ros");
 
         // 3. project depth cloud on a range image, filter points satcked in the same region
         float bin_res = 180.0 / (float)num_bins; // currently only cover the space in front of lidar (-90 ~ 90)

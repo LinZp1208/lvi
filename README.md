@@ -11,10 +11,14 @@ This repository contains code for a lidar-visual-inertial odometry and mapping s
 ## Dependency
 
 - [ROS](http://wiki.ros.org/ROS/Installation) (Tested with kinetic and melodic)
-- [gtsam](https://gtsam.org/get_started/) (Georgia Tech Smoothing and Mapping library)
+- [gtsam](https://github.com/borglab/gtsam/releases) (Georgia Tech Smoothing and Mapping library)
   ```
-  sudo add-apt-repository ppa:borglab/gtsam-release-4.0
-  sudo apt install libgtsam-dev libgtsam-unstable-dev
+  wget -O ~/Downloads/gtsam.zip https://github.com/borglab/gtsam/archive/4.0.2.zip
+  cd ~/Downloads/ && unzip gtsam.zip -d ~/Downloads/
+  cd ~/Downloads/gtsam-4.0.2/
+  mkdir build && cd build
+  cmake -DGTSAM_BUILD_WITH_MARCH_NATIVE=OFF ..
+  sudo make install -j4
   ```
 - [Ceres](https://github.com/ceres-solver/ceres-solver/releases) (C++ library for modeling and solving large, complicated optimization problems)
   ```
@@ -84,19 +88,6 @@ rosbag play handheld.bag
 
 ---
 
-## Related Packages
-
-  - [LVI_SAM_fixed by epicjung](https://github.com/epicjung/LVI_SAM_fixed)
-  - [LVI-SAM-modified by skyrim835](https://github.com/skyrim835/LVI-SAM-modified)
-
----
-
-## TODO
-
-  - [ ] Update graph optimization using all three factors in imuPreintegration.cpp, simplify mapOptimization.cpp, increase system stability 
-
----
-
 ## Paper 
 
 Thank you for citing our [paper](./doc/paper.pdf) if you use any of this code or datasets.
@@ -106,7 +97,7 @@ Thank you for citing our [paper](./doc/paper.pdf) if you use any of this code or
   title={LVI-SAM: Tightly-coupled Lidar-Visual-Inertial Odometry via Smoothing and Mapping},
   author={Shan, Tixiao and Englot, Brendan and Ratti, Carlo and Rus Daniela},
   booktitle={IEEE International Conference on Robotics and Automation (ICRA)},
-  pages={5692-5698},
+  pages={to-be-added},
   year={2021},
   organization={IEEE}
 }

@@ -1,0 +1,103 @@
+%YAML:1.0
+
+# Project
+project_name: "lvi_sam"
+
+#common parameters
+imu_topic: "/X1/imu/data"
+image_topic: "/X1/image_raw"
+point_cloud_topic: "lvi_sam/lidar/deskew/cloud_deskewed"
+
+# Lidar Params
+use_lidar: 1                     # whether use depth info from lidar or not
+lidar_skip: 3                    # skip this amount of scans
+align_camera_lidar_estimation: 1 # align camera and lidar estimation for visualization
+
+# lidar to camera extrinsic
+lidar_to_cam_tx: 0.16 #0.05
+lidar_to_cam_ty: 0.0 #-0.07
+lidar_to_cam_tz: -0.14 #-0.07
+lidar_to_cam_rx: 0.0
+lidar_to_cam_ry: 0.0
+lidar_to_cam_rz: 0.0
+
+
+# Mono camera config
+model_type: PINHOLE
+camera_name: camera
+image_width: 480
+image_height: 360
+distortion_parameters:
+   k1: 0.0
+   k2: 0.0
+   p1: 0.0
+   p2: 0.0
+projection_parameters:
+   fx: 355.815
+   fy: 355.815
+   cx: 240.5
+   cy: 180.5
+
+
+#imu parameters       The more accurate parameters you provide, the better performance
+acc_n: 5.2960596977201825e-03          # accelerometer measurement noise standard deviation. #0.2   0.04
+gyr_n: 9.3980641346540076e-04         # gyroscope measurement noise standard deviation.     #0.05  0.004
+acc_w: 3.7432151597952906e-04         # accelerometer bias random work noise standard deviation.  #0.02
+gyr_w: 3.7823379098253698e-05      # gyroscope bias random work noise standard deviation.     #4.0e-5
+g_norm: 9.85007     # gravity magnitude
+
+# Extrinsic parameter between IMU and Camera.
+estimate_extrinsic: 0   # 0  Have an accurate extrinsic parameters. We will trust the following imu^R_cam, imu^T_cam, don't change it.
+                        # 1  Have an initial guess about extrinsic parameters. We will optimize around your initial guess.
+                        # 2  Don't know anything about extrinsic parameters. You don't need to give R,T. We will try to calibrate it. Do some rotation movement at beginning. 
+#Rotation from camera frame to imu frame, imu^R_cam
+extrinsicRotation: !!opencv-matrix
+   rows: 3
+   cols: 3
+   dt: d
+   data: [-0.00112705,-0.0387229,0.999249,
+          -0.999905,0.0137727,-0.000594069,
+          -0.0137394,-0.999155,-0.0387347]
+
+#  -0.00112705   -0.0387229     0.999249
+#    -0.999905    0.0137727 -0.000594069
+#   -0.0137394    -0.999155   -0.0387347
+
+#Translation from camera frame to imu frame, imu^T_cam
+extrinsicTranslation: !!opencv-matrix
+   rows: 3
+   cols: 1
+   dt: d
+   data: [0.16,0.0,-0.02]
+
+
+#feature traker paprameters
+max_cnt: 150            # max feature number in feature tracking
+min_dist: 30            # min distance between two features 
+freq: 20                # frequence (Hz) of publish tracking result. At least 10Hz for good estimation. If set 0, the frequence will be same as raw image 
+F_threshold: 1.0        # ransac threshold (pixel)
+show_track: 1           # publish tracking image as topic
+equalize: 1             # if image is too dark or light, trun on equalize to find enough features
+fisheye: 0              # if using fisheye, trun on it. A circle mask will be loaded to remove edge noisy points
+
+#optimization parameters
+max_solver_time: 0.04  # max solver itration time (ms), to guarantee real time
+max_num_iterations: 8   # max solver itrations, to guarantee real time
+keyframe_parallax: 10.0 # keyframe selection threshold (pixel)
+
+#unsynchronization parameters
+estimate_td: 0           # online estimate time offset between camera and imu
+td: 0                    # initial value of time offset. unit: s. readed image clock + td = real image clock (IMU clock)
+
+#rolling shutter parameters
+rolling_shutter: 0       # 0: global shutter camera, 1: rolling shutter camera
+rolling_shutter_tr: 0    # unit: s. rolling shutter read out time per frame (from data sheet). 
+
+#loop closure parameters
+loop_closure: 1                    # start loop closure
+skip_time: 0.0
+skip_dist: 0.0
+debug_image: 0                      # save raw image in loop detector for visualization prupose; you can close this function by setting 0 
+match_image_scale: 0.5
+vocabulary_file: "/config/brief_k10L6.bin"
+brief_pattern_file: "/config/brief_pattern.yml"
